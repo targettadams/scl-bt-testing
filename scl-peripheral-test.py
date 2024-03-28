@@ -9,9 +9,9 @@ import threading
 
 class TestService(Service):
     def __init__(self):
-        super().__init__("5a0d6a15-b664-4304-8530-3a0ec53e5bc1", True)
+        super().__init__("1ce7ae9b-3dc0-48ce-ae2a-f91b729fd20e", True)
 
-    @characteristic("df531f62-fc0b-40ce-81b2-32a6262ea440", CharFlags.WRITE).setter
+    @characteristic("832cb5ef-9b89-4ca1-bad2-7769f414fb80", CharFlags.WRITE).setter
     def cricNetWriteCharacteristic(self, value, options):
         print(value)
 
@@ -33,7 +33,7 @@ async def main():
 
     adapter = await Adapter.get_first(bus)
 
-    advert = Advertisement("CricNet Scoreboard", ["5a0d6a15-b664-4304-8530-3a0ec53e5bc1"], 0x0140, 0)
+    advert = Advertisement("ScoreLite-Link", [], 0x0140, 0)
     await advert.register(bus, adapter)
 
     while True:
