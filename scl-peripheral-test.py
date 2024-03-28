@@ -4,8 +4,6 @@ from bluez_peripheral.util import *
 from bluez_peripheral.advert import Advertisement
 from bluez_peripheral.agent import NoIoAgent
 import asyncio
-import struct
-import threading
 
 class TestService(Service):
     def __init__(self):
