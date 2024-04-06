@@ -4,6 +4,21 @@ from bluez_peripheral.util import *
 from bluez_peripheral.advert import Advertisement
 from bluez_peripheral.agent import NoIoAgent
 import asyncio
+import json
+
+command_label_mapping = {}
+command_label_mapping["0x07"] = "Total"
+command_label_mapping["0x19"] = "Wickets"
+command_label_mapping["0x02"] = "Over"
+command_label_mapping["0x09"] = "To Win"
+command_label_mapping["0x0B"] = "Batter 1 Score"
+command_label_mapping["0x0F"] = "Batter 2 Score"
+command_label_mapping["0x65"] = "Brightness"
+command_label_mapping["0x66"] = "Default colour"
+command_label_mapping["0x68"] = "To Win colour"
+command_label_mapping["0x6C"] = "Wickets switched on"
+command_label_mapping["0x6B"] = "To Win switched on"
+command_label_mapping["0x67"] = "To Win colour enabled"
 
 class TestService(Service):
     def __init__(self):
@@ -11,13 +26,23 @@ class TestService(Service):
 
     @characteristic("832cb5ef-9b89-4ca1-bad2-7769f414fb80", CharFlags.WRITE).setter
     def cricNetWriteCharacteristic(self, value, options):
-        print(value)
+        try:
+            json_data = json.loads(value.decode('utf-8'))
+        except:
+            print("Problem parsing JSON data.")
+            raise
+        print("*******")
+        for key in json_data:
+            if (key not in command_label_mapping):
+                raise NotImplementedError(f"Unsupported command: {key}")
+            else:
+                print(f"{command_label_mapping[key]} set to {json_data[key]}")
 
     @characteristic("29a98ca5-b3dc-45e5-94c1-4b119a2df7b3", CharFlags.READ)
     def cricNetSyncCharacteristic(self, options):
         print("IMPORT")
         # Just return some test data; this will be piped from the scoreboard in practice.
-        data = '{"2":"56.0","4":789,"7":123,"25":4,"101":80,"102":"#00ff00","103":"true","104":"#ffa500","107":"false","108":"true","api":"CN"}'
+        data = '{"0x07":"123","0x19":"4","0x02":"89","0x09":"567","0x0B":"12","0x0F":"34","0x65":"50","0x66":"#ffffff","0x68":"#0000ff","0x6C":"true","0x6B":"true","0x67":"true"}'
         return data.encode('utf-8')
 
 async def main():
